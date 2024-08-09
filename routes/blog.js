@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { purgomalum } from '../public/js/purgomalum.js';
 
 const router = Router();
 let posts = [];
@@ -17,10 +18,10 @@ router.get("/edit/:index",(req,res)=>{
     res.render("pages/new",{post, index});
 });
 
-router.post("/new", (req, res)=>{
+router.post("/new", async (req, res)=>{
     const post = {
-        title : req.body.title,
-        content : req.body.content
+        title :  await purgomalum(req.body.title),
+        content : await purgomalum(req.body.content)
     }
 
     posts.push(post);
@@ -35,11 +36,11 @@ router.delete("/delete/:index", (req, res) => {
     res.redirect("/");
 });
 
-router.post("/edit/:index",(req,res)=>{
+router.post("/edit/:index",async(req,res)=>{
     const index = req.params.index;
     posts[index] = {
-        title : req.body.title,
-        content : req.body.content
+        title :  await purgomalum(req.body.title),
+        content :  await purgomalum(req.body.content)
     };
     res.redirect('/');
 });

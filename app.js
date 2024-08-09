@@ -4,6 +4,7 @@ import blogRoutes from "./routes/blog.js";
 import path from "path";
 import { fileURLToPath } from 'url';
 import methodOverride from 'method-override';
+import axios from "axios";
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
