@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from 'url';
 import methodOverride from 'method-override';
 import axios from "axios";
+import dotenv from "dotenv";
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
