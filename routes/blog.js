@@ -1,16 +1,19 @@
 import { Router } from 'express';
 import { showAllPosts, showEditPostForm, showNewPostForm, createNewPost, editPost, deletePostbyID } from '../controller/blogController.js';
+import { ensureAuthenticated } from '../utils/library.js'; 
 
 const router = Router();
 
-router.get("/", showAllPosts);
-router.get('/new', showNewPostForm);
-router.get('/edit/:id', showEditPostForm);
+//public routes
+router.get("/", showAllPosts);  
 
-router.post('/new', createNewPost);
-router.post('/edit/:id', editPost);
+//auth required
+router.get('/new', ensureAuthenticated, showNewPostForm);  
+router.get('/edit/:id', ensureAuthenticated, showEditPostForm);  
 
-router.delete('/delete/:id', deletePostbyID)
-  
+router.post('/new', ensureAuthenticated, createNewPost);  
+router.post('/edit/:id', ensureAuthenticated, editPost);  
+
+router.delete('/delete/:id', ensureAuthenticated, deletePostbyID);
 
 export default router;

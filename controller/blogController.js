@@ -5,7 +5,6 @@ import { date } from "../public/js/date.js";
 export const showAllPosts = async (req,res)=>{
     try{
         const posts = await getAllPosts();
-        console.log('Posts fetched:', posts); 
         res.render("pages/index",{posts});
     }catch(error){
         res.status(500).send("error fetching post");
@@ -30,16 +29,18 @@ export const showEditPostForm = async (req,res)=>{
 
 export const createNewPost = async (req,res) => {
     try{
+        const author = `${req.user.fname} ${req.user.lname}`;
         const post = {
             title :  await purgomalum(req.body.title),
             content : await purgomalum(req.body.content),
-            author : await purgomalum(req.body.author),
-            date : date(new Date())
+            author : await purgomalum(author),
+            date : date(new Date()),
+            user_id : req.user.id
         }
         await addPost(post);
         res.redirect('/');
     }catch(error){
-        res.status(500).send("error creating psot");
+        res.status(500).send("error creating post");
     }
 }
 
@@ -49,7 +50,6 @@ export const editPost = async (req,res) => {
         const post = {
             title :  await purgomalum(req.body.title),
             content : await purgomalum(req.body.content),
-            author : await purgomalum(req.body.author),
             date : date(new Date())
         }
         await updatePost(id, post);
