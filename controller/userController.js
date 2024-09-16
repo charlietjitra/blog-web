@@ -1,6 +1,7 @@
 import passport from "passport";
 import { findByEmail,findById,checkPass,create } from "../models/userModels.js";
 import bcrypt from 'bcrypt';
+import { generateToken } from "../utils/jwt.js";
 
 export const showRegisterForm = (req,res) => {
     res.render('pages/register');
@@ -15,7 +16,7 @@ export const register = async(req,res) => {
     try{
         const existingUser = await findByEmail(username);
         if(existingUser){
-            res.send("email has been registered");
+            res.status(500).send("email has been registered");
         }
         
         const hashedPs = await bcrypt.hash(password,10);
@@ -27,16 +28,24 @@ export const register = async(req,res) => {
 };
 
 export const login = (req,res,next) => {
-    passport.authenticate('local',{
-        successRedirect: '/',
-        failureRedirect: '/auth/login',
-        failureFlash: true
+    passport.authenticate('local',{ session : false },(err,user,info)=> {
+        if(err) res.json('error');
+
+        if(!user){
+            return res.status(403).send("Invalid credentials");
+        }
+
+        const token = generateToken(user);
+        res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+
+        res.redirect('/');
+        
     })(req, res, next);
 };
 
 export const userLogout = (req,res,next) => {
-    req.logout((err) => {
-        if(err) { return next(err); }
-        res.redirect('/');
-    })
+    console.log("loggingout user" + req.user);
+    res.clearCookie('token');
+    res.redirect('/');
+    
 }

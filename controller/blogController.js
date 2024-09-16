@@ -2,6 +2,7 @@ import { getAllPosts, getPostbyID, updatePost, deletePost, addPost } from "../mo
 import { purgomalum } from "../public/js/purgomalum.js";
 import { date } from "../public/js/date.js";
 
+
 export const showAllPosts = async (req,res)=>{
     try{
         const posts = await getAllPosts();
@@ -18,6 +19,11 @@ export const showNewPostForm = (req,res) => {
 export const showEditPostForm = async (req,res)=>{
     try{
         const post = await getPostbyID(parseInt(req.params.id));
+
+        if(post.user_id != req.user.id){
+            return res.status(403).send("You don't have authorization to update this post");
+        }
+
         if(!post){
             res.status(404).send("Post not found");
         }
@@ -59,8 +65,13 @@ export const editPost = async (req,res) => {
     }
 }
 
+
 export const deletePostbyID = async (req,res) => {
     try{
+        const post = await getPostbyID(parseInt(req.params.id,10));
+        if (post.user_id !== req.user.id) {
+            return res.status(403).send("You don't have permission to delete this post.");
+        }
         await deletePost(parseInt(req.params.id,10));
         res.redirect('/');
     }catch(error){

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { showAllPosts, showEditPostForm, showNewPostForm, createNewPost, editPost, deletePostbyID } from '../controller/blogController.js';
-import { ensureAuthenticated } from '../utils/library.js'; 
+import { verifyUserToken } from '../utils/jwt.js'; 
 
 const router = Router();
 
@@ -8,12 +8,12 @@ const router = Router();
 router.get("/", showAllPosts);  
 
 //auth required
-router.get('/new', ensureAuthenticated, showNewPostForm);  
-router.get('/edit/:id', ensureAuthenticated, showEditPostForm);  
+router.get('/new', verifyUserToken, showNewPostForm);  
+router.get('/edit/:id', verifyUserToken, showEditPostForm);  
 
-router.post('/new', ensureAuthenticated, createNewPost);  
-router.post('/edit/:id', ensureAuthenticated, editPost);  
+router.post('/new', verifyUserToken, createNewPost);  
+router.post('/edit/:id', verifyUserToken, editPost);  
 
-router.delete('/delete/:id', ensureAuthenticated, deletePostbyID);
+router.delete('/delete/:id', verifyUserToken, deletePostbyID);
 
 export default router;
