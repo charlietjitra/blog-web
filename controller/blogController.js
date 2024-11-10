@@ -1,9 +1,13 @@
 import { getAllPosts, getPostbyID, updatePost, deletePost, addPost } from "../models/postModels.js";
 import { purgomalum } from "../public/js/purgomalum.js";
 import { date } from "../public/js/date.js";
-
+import { redisC } from "../utils/redis.js";
 
 export const showAllPosts = async (req,res)=>{
+    
+    let result;
+    let isCached = false;
+
     try{
         const posts = await getAllPosts();
         res.render("pages/index",{posts});
